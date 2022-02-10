@@ -53,11 +53,47 @@
     Out: /detection/image_detector/objects [autoware_msgs::DetectedObjectArray]
   -->
   <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
+    <arg name='camera_id' value='front' />
+    <arg name='gpu_device_id' value="0"/>
+    <arg name='image_src' value="/carla/ego_vehicle/camera/rgb/front/image_color" />
+
     <arg name='score_threshold' value='0.50'/>
     <arg name='nms_threshold' value='0.30'/>
     <arg name='pretrained_model_file' value='$(find vision_darknet_detect)/darknet/data/yolov3.weights'/>
     <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
-    <arg name='image_src' value="carla/ego_vehicle/camera/rgb/front/image_color" />
+  </include>
+
+  <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
+    <arg name='camera_id' value='left' />
+    <arg name='gpu_device_id' value="0"/>
+    <arg name='image_src' value="/carla/ego_vehicle/camera/rgb/left/image_color" />
+
+    <arg name='score_threshold' value='0.50'/>
+    <arg name='nms_threshold' value='0.30'/>
+    <arg name='pretrained_model_file' value='$(find vision_darknet_detect)/darknet/data/yolov3.weights'/>
+    <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
+  </include>
+
+  <!-- <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
+    <arg name='camera_id' value='right' />
+    <arg name='gpu_device_id' value="0"/>
+    <arg name='image_src' value="/carla/ego_vehicle/camera/rgb/right/image_color" />
+    
+    <arg name='score_threshold' value='0.50'/>
+    <arg name='nms_threshold' value='0.30'/>
+    <arg name='pretrained_model_file' value='$(find vision_darknet_detect)/darknet/data/yolov3.weights'/>
+    <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
+  </include> -->
+
+  <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
+    <arg name='camera_id' value='rear' />
+    <arg name='gpu_device_id' value="0"/>
+    <arg name='image_src' value="/carla/ego_vehicle/camera/rgb/rear/image_color" />
+   
+    <arg name='score_threshold' value='0.50'/>
+    <arg name='nms_threshold' value='0.30'/>
+    <arg name='pretrained_model_file' value='$(find vision_darknet_detect)/darknet/data/yolov3.weights'/>
+    <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
   </include>
 
   <!--
@@ -99,8 +135,8 @@
     <arg name='input_topic' value='/detection/fusion_tools/objects'/>
   </include>
 
-  <include file='$(find vision_lane_detect)/launch/vision_lane_detect.launch'>
+  <!-- <include file='$(find vision_lane_detect)/launch/vision_lane_detect.launch'>
     <arg name='image_raw_topic' value='/carla/ego_vehicle/camera/rgb/front/image_color'/>
-  </include>
+  </include> -->
 
 </launch>

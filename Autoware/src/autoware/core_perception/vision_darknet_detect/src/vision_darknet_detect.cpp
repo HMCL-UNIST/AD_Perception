@@ -334,14 +334,23 @@ void Yolo3DetectorNode::Run()
         use_coco_names_ = true;
     }
 
+
+    if (private_node_handle.getParam("camera_id", camera_id))
+    {
+        ROS_INFO("Camera Id: %s", camera_id.c_str());
+    }
+    else
+    {
+        ROS_INFO("No Camera Id was received. Using as it's front.");
+        camera_id = "front";
+    }
+
     private_node_handle.param<float>("score_threshold", score_threshold_, 0.5);
     ROS_INFO("[%s] score_threshold: %f",__APP_NAME__, score_threshold_);
 
     private_node_handle.param<float>("nms_threshold", nms_threshold_, 0.45);
     ROS_INFO("[%s] nms_threshold: %f",__APP_NAME__, nms_threshold_);
 
-    private_node_handle.param<float>("camera_id", camera_id, 0.0);
-    ROS_INFO("[%s] camera_id: %f", __APP_NAME__, camera_id);
 
     ROS_INFO("Initializing Yolo on Darknet...");
     yolo_detector_.load(network_definition_file, pretrained_model_file, score_threshold_, nms_threshold_);
@@ -353,7 +362,7 @@ void Yolo3DetectorNode::Run()
         generateColors(colors_, 80);
     #endif
 
-    std::string output_topic = "/detection/" + std::to_string(camera_id) + "/image_detector/objects";
+    std::string output_topic = "/detection/" + camera_id + "/image_detector/objects";
     publisher_objects_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>(output_topic, 1);
 
     ROS_INFO("Subscribing to... %s", image_raw_topic_str.c_str());

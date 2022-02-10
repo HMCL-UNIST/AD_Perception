@@ -53,3 +53,14 @@ Launch file available parameters:
 ### Video
 
 [![Yolo v3 Autoware](https://img.youtube.com/vi/pO4vM4ehI98/0.jpg)](https://www.youtube.com/watch?v=pO4vM4ehI98)
+
+
+### Issues
+
+*Don't know why, to appy any modifications (even in .launch), it should be built again
+'''
+cd ~/Autoware
+colcon build --packages-select vision_darknet_detect
+'''
+
+*In case of Desktop setup, running three YOLO thread is maximum.
