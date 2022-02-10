@@ -100,6 +100,7 @@ class Yolo3DetectorNode {
     double                          image_ratio_;//resize ratio used to fit input image to network input size
     uint32_t                        image_top_bottom_border_;//black strips added to the input image to maintain aspect ratio while resizing it to fit the network input size
     uint32_t                        image_left_right_border_;
+    float                        camera_id;
     std::vector<cv::Scalar>         colors_;
 
     std::vector<std::string>        custom_names_;

@@ -340,6 +340,8 @@ void Yolo3DetectorNode::Run()
     private_node_handle.param<float>("nms_threshold", nms_threshold_, 0.45);
     ROS_INFO("[%s] nms_threshold: %f",__APP_NAME__, nms_threshold_);
 
+    private_node_handle.param<float>("camera_id", camera_id, 0.0);
+    ROS_INFO("[%s] camera_id: %f", __APP_NAME__, camera_id);
 
     ROS_INFO("Initializing Yolo on Darknet...");
     yolo_detector_.load(network_definition_file, pretrained_model_file, score_threshold_, nms_threshold_);
@@ -351,7 +353,8 @@ void Yolo3DetectorNode::Run()
         generateColors(colors_, 80);
     #endif
 
-    publisher_objects_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>("/detection/image_detector/objects", 1);
+    std::string output_topic = "/detection/" + std::to_string(camera_id) + "/image_detector/objects";
+    publisher_objects_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>(output_topic, 1);
 
     ROS_INFO("Subscribing to... %s", image_raw_topic_str.c_str());
     subscriber_image_raw_ = node_handle_.subscribe(image_raw_topic_str, 1, &Yolo3DetectorNode::image_callback, this);
