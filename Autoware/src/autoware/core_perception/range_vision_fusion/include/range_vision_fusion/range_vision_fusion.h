@@ -55,13 +55,22 @@
 
 #include "autoware_msgs/DetectedObjectArray.h"
 
+class CameraInfo
+{
+  cv::Size image_size_;
+  cv::Mat camera_instrinsics_;
+  cv::Mat distortion_coefficients_;
+  float fx_, fy_, cx_, cy_;
+  bool camera_info_ok_;
+  std::string image_frame_id_;
+}
 class ROSRangeVisionFusionApp
 {
   ros::NodeHandle node_handle_;
   ros::Publisher publisher_fused_objects_;
 
-  ros::Subscriber intrinsics_subscriber_;
-  ros::Subscriber detections_vision_subscriber_;
+  std::vector<ros::Subscriber> intrinsics_subscriber_;
+  std::vector<ros::Subscriber> detections_vision_subscriber_;
   ros::Subscriber detections_range_subscriber_;
 
   message_filters::Subscriber<autoware_msgs::DetectedObjectArray>
@@ -70,10 +79,6 @@ class ROSRangeVisionFusionApp
   tf::TransformListener *transform_listener_;
   tf::StampedTransform camera_lidar_tf_;
 
-  cv::Size image_size_;
-  cv::Mat camera_instrinsics_;
-  cv::Mat distortion_coefficients_;
-
   cv::Mat image_;
   ros::Subscriber image_subscriber_;
 
@@ -81,14 +86,12 @@ class ROSRangeVisionFusionApp
 
   autoware_msgs::DetectedObjectArray::ConstPtr vision_detections_, range_detections_;
 
-  std::string image_frame_id_;
   std::string boxes_frame_;
 
   bool processing_;
-  bool camera_info_ok_;
+  
   bool camera_lidar_tf_ok_;
 
-  float fx_, fy_, cx_, cy_;
   double overlap_threshold_;
 
   double car_width_, car_height_, car_depth_;
@@ -101,7 +104,7 @@ class ROSRangeVisionFusionApp
   message_filters::sync_policies::ApproximateTime<autoware_msgs::DetectedObjectArray,
     autoware_msgs::DetectedObjectArray> SyncPolicyT;
 
-  ros::Subscriber vision_objects_subscriber_;
+  std::vector<ros::Subscriber> vision_objects_subscriber_;
   ros::Subscriber range_objects_subscriber_;
 
   message_filters::Synchronizer<SyncPolicyT>

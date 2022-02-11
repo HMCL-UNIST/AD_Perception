@@ -333,7 +333,7 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
 
   autoware_msgs::DetectedObjectArray range_in_cv;
   autoware_msgs::DetectedObjectArray range_out_cv;
-  TransformRangeToVision(in_range_detections, range_in_cv, range_out_cv);
+  TransformRangeToVision(in_range_detections, range_in_cv, range_out_cv); //Determine whether the object is in the camera FoV
 
   autoware_msgs::DetectedObjectArray fused_objects;
   fused_objects.header = in_range_detections->header;
@@ -376,6 +376,8 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
         range_in_cv.objects[j].angle = vision_object.angle;
         range_in_cv.objects[j].id = vision_object.id;
         CheckMinimumDimensions(range_in_cv.objects[j]);
+
+        // WHY ONE OF THE QUATERNION COMPONENT SHOULD BE POSITIVE?
         if (vision_object.pose.orientation.x > 0
             || vision_object.pose.orientation.y > 0
             || vision_object.pose.orientation.z > 0)
@@ -385,7 +387,7 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
         if (current_distance < closest_distance)
         {
           closest_index = j;
-          closest_distance = current_distance;
+          closest_distance = current_distance; 
         }
         used_vision_detections[i] = true;
       }//end if overlap
@@ -532,7 +534,7 @@ ROSRangeVisionFusionApp::IntrinsicsCallback(const sensor_msgs::CameraInfo &in_me
   {
     for (int col = 0; col < 3; col++)
     {
-      camera_instrinsics_.at<double>(row, col) = in_message.K[row * 3 + col];
+      0/.at<double>(row, col) = in_message.K[row * 3 + col];
     }
   }
 
@@ -578,7 +580,9 @@ void
 ROSRangeVisionFusionApp::InitializeROSIo(ros::NodeHandle &in_private_handle)
 {
   //get params
-  std::string camera_info_src, detected_objects_vision, min_car_dimensions, min_person_dimensions, min_truck_dimensions;
+  std::vector<std::string> camera_info_src, detected_objects_vision;
+  std::string camera_list_;
+  std::string camera_node_name, detected_objects_vision_, min_car_dimensions, min_person_dimensions, min_truck_dimensions;
   std::string detected_objects_range, fused_topic_str = "/detection/fusion_tools/objects";
   std::string name_space_str = ros::this_node::getNamespace();
   bool sync_topics = false;
@@ -590,12 +594,23 @@ ROSRangeVisionFusionApp::InitializeROSIo(ros::NodeHandle &in_private_handle)
                                        "/detection/lidar_detector/objects");
   ROS_INFO("[%s] detected_objects_range: %s", __APP_NAME__, detected_objects_range.c_str());
 
-  in_private_handle.param<std::string>("detected_objects_vision", detected_objects_vision,
-                                       "/detection/image_detector/objects");
-  ROS_INFO("[%s] detected_objects_vision: %s", __APP_NAME__, detected_objects_vision.c_str());
+  in_private_handle.param<std::string>("camera_list", camera_list_,"[front]");
+  ROS_INFO("[&s] camera_list: %s", __APP_NAME__, camera_list_.c_str());
 
-  in_private_handle.param<std::string>("camera_info_src", camera_info_src, "/camera_info");
-  ROS_INFO("[%s] camera_info_src: %s", __APP_NAME__, camera_info_src.c_str());
+  in_private_handle.param<std::string>("camera_node_name", camera_node_name, "/carla/ego_vehicle/camera/rgb/");
+  ROS_INFO("[%s] camera_node_name: %s", __APP_NAME__, camera_node_name.c_str());
+
+  in_private_handle.param<std::string>("detected_objects_vision", detected_objects_vision_,
+                                       "/detection/image_detector");
+  ROS_INFO("[%s] detected_objects_vision: %s", __APP_NAME__, detected_objects_vision_.c_str());
+
+  YAML::Node camera_list = YAML::Load(camera_list_);
+  for (size_t i = 0; i < camera_list.size(); i++)
+  {
+    camera_info_src.push_back(camera_node_name+camera_list[i]+"/camera_info");
+    detected_objects_vision.push_back(detected_objects_vision_+camera_list[i]+"/objects");
+  }
+
 
   in_private_handle.param<double>("overlap_threshold", overlap_threshold_, 0.6);
   ROS_INFO("[%s] overlap_threshold: %f", __APP_NAME__, overlap_threshold_);
@@ -642,7 +657,11 @@ ROSRangeVisionFusionApp::InitializeROSIo(ros::NodeHandle &in_private_handle)
     {
       name_space_str.erase(name_space_str.begin());
     }
-    camera_info_src = name_space_str + camera_info_src;
+    for (size_t i = 0; i < camera_info_src.size(); i++)
+    {
+      camera_info_src[i] = name_space_str + camera_info_src[i];
+    }
+   
   }
 
   //generate subscribers and sychronizers
