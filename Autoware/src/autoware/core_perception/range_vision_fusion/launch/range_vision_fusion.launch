@@ -6,6 +6,7 @@
   <arg name="min_car_dimensions" default="[3,2,2]"/>
   <arg name="min_person_dimensions" default="[1,2,1]"/>
   <arg name="min_truck_dimensions" default="[4,2,2]"/>
+  <!-- for now sync version for multiple cam is not ready -->
   <arg name="sync_topics" default="false"/>
   <arg name="overlap_threshold" default="0.6"/>
   <arg name="use_vector_map" default="false"/>
