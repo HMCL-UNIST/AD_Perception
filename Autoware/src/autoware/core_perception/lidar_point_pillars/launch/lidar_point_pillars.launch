@@ -1,5 +1,5 @@
 <launch>
-  <arg name="input_topic" default="/points_withoud_map" />
+  <arg name="input_topic" default="/points_without_map" />
   <arg name="baselink_support" default="true" />
   <arg name="reproduce_result_mode" default="true" />
   <arg name="score_threshold" default="0.5" />

@@ -24,6 +24,7 @@
     <!-- Remove the detected objects outside of the drivable area -->
     <arg name='use_vector_map' value='false'/>
   </include>
+  
 
   <!--
     # lidar shape estimation #
