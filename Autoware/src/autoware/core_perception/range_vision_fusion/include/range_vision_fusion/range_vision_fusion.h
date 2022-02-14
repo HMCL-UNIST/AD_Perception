@@ -57,14 +57,15 @@
 
 class CameraInformation
 {
-  cv::Size image_size_;
-  cv::Mat camera_instrinsics_;
-  cv::Mat distortion_coefficients_;
-  float fx_, fy_, cx_, cy_;
-  bool camera_info_ok_;
-  std::string image_frame_id_;
-  tf::StampedTransform camera_lidar_tf_;
-}
+  public:
+    cv::Size image_size_;
+    cv::Mat camera_intrinsics_;
+    cv::Mat distortion_coefficients_;
+    float fx_, fy_, cx_, cy_;
+    bool camera_info_ok_;
+    std::string image_frame_id_;
+    tf::StampedTransform camera_lidar_tf_;
+};
 class ROSRangeVisionFusionApp
 {
   ros::NodeHandle node_handle_;
@@ -85,17 +86,19 @@ class ROSRangeVisionFusionApp
 
   void ImageCallback(const sensor_msgs::Image::ConstPtr &in_image_msg);
 
-  autoware_msgs::DetectedObjectArray::ConstPtr vision_detections_, range_detections_;
-
+  autoware_msgs::DetectedObjectArray::ConstPtr range_detections_;
+  autoware_msgs::DetectedObjectArray::Ptr vision_detections_;
   std::string boxes_frame_;
 
-  std:vector<CameraInformation> camera_info;
+  std::vector<CameraInformation> camera_info;
 
   bool processing_;
-  
+  bool camera_info_ok_;
   bool camera_lidar_tf_ok_;
   uint8_t vision_callback_count;
   double overlap_threshold_;
+
+  YAML::Node camera_list;
 
   double car_width_, car_height_, car_depth_;
   double person_width_, person_height_, person_depth_;
@@ -134,7 +137,7 @@ class ROSRangeVisionFusionApp
 
   uint8_t IsObjectInImage(const autoware_msgs::DetectedObject &in_detection, const std::vector<CameraInformation> camera_info_vector);
 
-  uint8_t TransformRangeToVision(const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections,
+  std::vector<uint8_t> TransformRangeToVision(const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections,
                               autoware_msgs::DetectedObjectArray &out_range_detections,
                               autoware_msgs::DetectedObjectArray &out_out_cv_range_detections);
 
@@ -158,7 +161,7 @@ class ROSRangeVisionFusionApp
   tf::StampedTransform
   FindTransform(const std::string &in_target_frame, const std::string &in_source_frame);
 
-  void IntrinsicsCallback(const sensor_msgs::CameraInfo &in_message, CameraInformation &camera_info_, size_t i);
+  void IntrinsicsCallback(const sensor_msgs::CameraInfo &in_message, CameraInformation camera_info_, size_t i);
 
   /*!
    * Reads the config params from the command line
