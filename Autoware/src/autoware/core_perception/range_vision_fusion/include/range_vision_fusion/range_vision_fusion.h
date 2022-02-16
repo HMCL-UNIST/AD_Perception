@@ -96,6 +96,7 @@ class ROSRangeVisionFusionApp
   bool camera_info_ok_;
   bool camera_lidar_tf_ok_;
   uint8_t vision_callback_count;
+  uint8_t camera_info_count;
   double overlap_threshold_;
 
   YAML::Node camera_list;
@@ -161,7 +162,7 @@ class ROSRangeVisionFusionApp
   tf::StampedTransform
   FindTransform(const std::string &in_target_frame, const std::string &in_source_frame);
 
-  void IntrinsicsCallback(const sensor_msgs::CameraInfo &in_message, CameraInformation camera_info_, size_t i);
+  void IntrinsicsCallback(const sensor_msgs::CameraInfo::ConstPtr &in_message, size_t i);
 
   /*!
    * Reads the config params from the command line

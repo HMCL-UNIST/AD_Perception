@@ -103,13 +103,14 @@
   -->
   <include file='$(find vision_beyond_track)/launch/vision_beyond_track.launch'>
     <arg name='camera_info_src' value='/carla/ego_vehicle/camera/rgb/front/camera_info'/>
-    <arg name='objects_topic_src' value='/detection/front/image_detector/objects'/>
+    <arg name='objects_topic_src' value='/detection/image_detector/front/objects'/>
+    <arg name='output_topic' value='/detection/image_tracker/front/objects' />
   </include>
 
   <node pkg='detected_objects_visualizer' type='visualize_rects' name='image_tracker_rects' output='screen'>
     <param name='image_src' value='/carla/ego_vehicle/camera/rgb/front/image_color'/>
     <param name='image_out' value='/image_tracker_rects'/>
-    <param name='object_src' value='/detection/front/image_detector/objects'/>
+    <param name='object_src' value='/detection/image_detector/front/objects'/>
   </node>
 
   <!--
@@ -122,7 +123,7 @@
     <arg name='camera_node_name' value='/carla/ego_vehicle/camera/rgb'/>  
     <arg name='camera_list' value='[front,rear]' /> 
     <arg name='detected_objects_range' value='/detection/lidar_tracker/objects'/>
-    <arg name='detected_objects_vision' value='/detection/image_tracker/objects'/>
+    <arg name='detected_objects_vision' value='/detection/image_tracker'/>
     <arg name='namespace' value='/detection/fusion_tools'/>
   </include>
 

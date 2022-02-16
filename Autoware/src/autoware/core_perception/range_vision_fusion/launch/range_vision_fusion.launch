@@ -1,6 +1,6 @@
 <launch>
   <arg name="camera_node_name" default="/carla/ego_vehicle/camera/rgb"/>
-  <arg name="camera_list" default="[front]"/>
+  <arg name="camera_list" default="[front,rear]"/>
   <arg name="detected_objects_range" default="/detection/lidar_detector/objects"/>
   <arg name="detected_objects_vision" default="/detection/image_detector"/>
   <arg name="min_car_dimensions" default="[3,2,2]"/>
@@ -13,11 +13,13 @@
   <arg name="namespace" default="/detection/fusion_tools"/>
 
   <node name="range_vision_fusion_01" pkg="range_vision_fusion" type="range_vision_fusion" output="screen">
+    <param name="camera_node_name" value="$(arg camera_node_name)"/>
+    <param name="camera_list" value="$(arg camera_list)" />
     <param name="detected_objects_range" value="$(arg detected_objects_range)"/>
     <param name="detected_objects_vision" value="$(arg detected_objects_vision)"/>
-    <param name="camera_node_name" value="$(arg camera_node_name)"/>
     <param name="min_car_dimensions" value="$(arg min_car_dimensions)"/>
     <param name="min_person_dimensions" value="$(arg min_person_dimensions)"/>
+    <param name="min_truck_dimensions" value="$(arg min_truck_dimensions)" />
     <param name="sync_topics" value="$(arg sync_topics)"/>
     <param name="overlap_threshold" value="$(arg overlap_threshold)"/>
   </node>
