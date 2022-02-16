@@ -350,7 +350,7 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
   autoware_msgs::DetectedObjectArray range_out_cv;
   std::vector<uint8_t> matching_index = 
                       TransformRangeToVision(in_range_detections, range_in_cv, range_out_cv); // Determine whether the object is in the camera FoV (All camera)
-
+  
   autoware_msgs::DetectedObjectArray fused_objects;
   fused_objects.header = in_range_detections->header;
 
@@ -488,8 +488,6 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
   {
     for (size_t i=0; i < camera_list.size(); i++)
     {
-      ROS_INFO("[%s] camera_info check %d ", __APP_NAME__, camera_info[i].camera_info_ok_);
-      ROS_INFO("[%s] camera_info check %s ", __APP_NAME__, camera_info[i].image_frame_id_.c_str());
       camera_info[i].camera_lidar_tf_ = FindTransform(camera_info[i].image_frame_id_,
                                      in_range_detections->header.frame_id);
     }
@@ -507,8 +505,8 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
   fusion_objects = FuseRangeVisionDetections(in_vision_detections, in_range_detections);
   publisher_fused_objects_.publish(fusion_objects);
   empty_frames_ = 0;
-  autoware_msgs::DetectedObjectArray tmp_detected_array;
-  *vision_detections_ = tmp_detected_array;
+  // autoware_msgs::DetectedObjectArray tmp_detected_array;
+  // *vision_detections_ = tmp_detected_array;
   range_detections_ = nullptr;
 
 }

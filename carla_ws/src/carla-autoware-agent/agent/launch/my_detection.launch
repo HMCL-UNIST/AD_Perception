@@ -123,7 +123,7 @@
     <arg name='camera_node_name' value='/carla/ego_vehicle/camera/rgb'/>  
     <arg name='camera_list' value='[front,rear]' /> 
     <arg name='detected_objects_range' value='/detection/lidar_tracker/objects'/>
-    <arg name='detected_objects_vision' value='/detection/image_tracker'/>
+    <arg name='detected_objects_vision' value='/detection/image_detector'/>
     <arg name='namespace' value='/detection/fusion_tools'/>
   </include>
 

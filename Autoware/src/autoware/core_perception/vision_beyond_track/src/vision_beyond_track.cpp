@@ -266,7 +266,7 @@ void BeyondTrackerNode::detection_to_objects(const std::vector<beyondtrack::Dete
   for (unsigned int i = 0; i < in_objects.size(); ++i)
   {
     autoware_msgs::DetectedObject obj;
-
+    obj.header.frame_id = out_message.header.frame_id;
     obj.x = (in_objects[i].bbox_[0]);
     obj.y = (in_objects[i].bbox_[1]);
     obj.width = (in_objects[i].bbox_[2] - in_objects[i].bbox_[0]);

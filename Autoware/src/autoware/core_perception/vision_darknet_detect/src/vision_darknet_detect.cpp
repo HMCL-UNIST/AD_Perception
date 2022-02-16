@@ -149,7 +149,7 @@ void Yolo3DetectorNode::convert_rect_to_image_obj(std::vector< RectClassScore<fl
     {
         {
             autoware_msgs::DetectedObject obj;
-
+            obj.header.frame_id = out_message.header.frame_id;
             obj.x = (in_objects[i].x /image_ratio_) - image_left_right_border_/image_ratio_;
             obj.y = (in_objects[i].y /image_ratio_) - image_top_bottom_border_/image_ratio_;
             obj.width = in_objects[i].w /image_ratio_;
