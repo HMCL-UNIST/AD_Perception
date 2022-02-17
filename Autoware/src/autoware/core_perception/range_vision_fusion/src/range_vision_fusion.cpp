@@ -453,6 +453,7 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
 {
   autoware_msgs::DetectedObjectArray tmp_detections;
   tmp_detections.header = in_range_detections->header;
+  tmp_detections.header.frame_id = target_frame;
 
   tf::StampedTransform transform_lidar_to_map;
   try
@@ -468,6 +469,7 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
   {
     autoware_msgs::DetectedObject tmp_object;
     tmp_object = object;
+    tmp_object.header.frame_id = target_frame;
 
     //Start Transfrom from lidar to map coordinate
     tmp_object.space_frame = target_frame;
@@ -517,6 +519,7 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
       tmp_object.pointcloud = object.pointcloud;
       tmp_object.pointcloud.header.frame_id = in_range_detections->header.frame_id;
       pcl_ros::transformPointCloud(target_frame, tmp_object.pointcloud, tmp_object.pointcloud, *transform_listener_);
+      tmp_object.pointcloud.header.frame_id = target_frame;
     }
     
     tmp_object.convex_hull.header = object.convex_hull.header;
