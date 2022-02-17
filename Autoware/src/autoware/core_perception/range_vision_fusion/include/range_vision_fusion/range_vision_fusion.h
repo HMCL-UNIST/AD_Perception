@@ -50,6 +50,12 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/conversions.h>
+#include <pcl/common/common.h>
+#include <pcl/point_types.h>
+#include <pcl_ros/transforms.h>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -98,7 +104,9 @@ class ROSRangeVisionFusionApp
   uint8_t vision_callback_count;
   uint8_t camera_info_count;
   double overlap_threshold_;
-
+  bool sync_topics;
+  bool use_map_coordinate;
+  
   YAML::Node camera_list;
 
   double car_width_, car_height_, car_depth_;
@@ -129,6 +137,9 @@ class ROSRangeVisionFusionApp
   autoware_msgs::DetectedObjectArray
   FuseRangeVisionDetections(const autoware_msgs::DetectedObjectArray::ConstPtr &in_vision_detections,
                             const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections);
+  
+  autoware_msgs::DetectedObjectArray
+  ChangeDetectionCoordinate(const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections, const std::string &target_frame="/map");
 
   cv::Point3f TransformPoint(const geometry_msgs::Point &in_point, const tf::StampedTransform &in_transform);
 
