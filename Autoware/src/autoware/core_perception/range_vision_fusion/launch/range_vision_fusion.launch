@@ -9,6 +9,7 @@
   <!-- for now sync version for multiple cam is not ready -->
   <arg name="sync_topics" default="false"/>
   <arg name="use_map_coordinate" default="true"/>
+  <arg name="map_frame_id" default="/map"/>
   <arg name="overlap_threshold" default="0.6"/>
   <arg name="use_vector_map" default="false"/>
   <arg name="namespace" default="/detection/fusion_tools"/>
@@ -23,6 +24,7 @@
     <param name="min_truck_dimensions" value="$(arg min_truck_dimensions)" />
     <param name="sync_topics" value="$(arg sync_topics)"/>
     <param name="use_map_coordinate" value="$(arg use_map_coordinate)"/>
+    <param name="map_frame_id" value="$(arg map_frame_id)"/>
     <param name="overlap_threshold" value="$(arg overlap_threshold)"/>
   </node>
 

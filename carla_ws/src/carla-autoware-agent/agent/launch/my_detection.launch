@@ -124,6 +124,11 @@
     <arg name='camera_list' value='[front,rear]' /> 
     <arg name='detected_objects_range' value='/detection/lidar_tracker/objects'/>
     <arg name='detected_objects_vision' value='/detection/image_detector'/>
+    <!-- change topic's frame_id to /map, apply transform -->
+    <arg name="use_map_coordinate" value="true"/> 
+    <arg name="map_frame_id" value="/map"/>
+    <arg name="overlap_threshold" value="0.6"/>
+    <arg name="use_vector_map" value="false"/>
     <arg name='namespace' value='/detection/fusion_tools'/>
   </include>
 

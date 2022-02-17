@@ -95,7 +95,7 @@ class ROSRangeVisionFusionApp
   autoware_msgs::DetectedObjectArray::ConstPtr range_detections_;
   autoware_msgs::DetectedObjectArray::Ptr vision_detections_;
   std::string boxes_frame_;
-
+  std::string map_frame_;
   std::vector<CameraInformation> camera_info;
 
   bool processing_;
@@ -139,7 +139,7 @@ class ROSRangeVisionFusionApp
                             const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections);
   
   autoware_msgs::DetectedObjectArray
-  ChangeDetectionCoordinate(const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections, const std::string &target_frame="/map");
+  ChangeDetectionCoordinate(const autoware_msgs::DetectedObjectArray::ConstPtr &in_range_detections, const std::string &target_frame);
 
   cv::Point3f TransformPoint(const geometry_msgs::Point &in_point, const tf::StampedTransform &in_transform);
 

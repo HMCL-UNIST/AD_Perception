@@ -544,7 +544,7 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
     if (use_map_coordindate)
     {
       autoware_msgs::DetectedObjectArray transformed_range_detections;
-      transformed_range_detections = ChangeDetectionCoordinate(in_range_detections);
+      transformed_range_detections = ChangeDetectionCoordinate(in_range_detections, map_frame_);
       publisher_fused_objects_.publish(transformed_range_detections);
     }
     else
@@ -586,7 +586,7 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
   if (use_map_coordinate)
   {
     autoware_msgs::DetectedObjectArray transformed_fusion_detections;
-    transformed_fusion_detections = ChangeDetectionCoordinate(fusion_objects);
+    transformed_fusion_detections = ChangeDetectionCoordinate(fusion_objects, map_frame_);
     publisher_fused_objects_.publish(transformed_fusion_detections);
   }
   else
@@ -765,8 +765,14 @@ ROSRangeVisionFusionApp::InitializeROSIo(ros::NodeHandle &in_private_handle)
   in_private_handle.param<bool>("sync_topics", sync_topics, false);
   ROS_INFO("[%s] sync_topics: %d", __APP_NAME__, sync_topics);
 
-  in_private_handle.param<bool>("use_map_coordinate", use_map_coordinate, false);
+  in_private_handle.param<bool>("use_map_coordinate", use_map_coordinate, true);
   ROS_INFO("[%s] use_map_coordinate: %d", __APP_NAME__,use_map_coordinate);
+
+  if (use_map_coordinate)
+  {
+    in_private_handle.param<std::string>("map_frame_id", map_frame_, "/map");
+    ROS_INFO("[%s] map_frame_id: %s", __APP_NAME__, map_frame_);
+  }
   
   YAML::Node car_dimensions = YAML::Load(min_car_dimensions);
   YAML::Node person_dimensions = YAML::Load(min_person_dimensions);
