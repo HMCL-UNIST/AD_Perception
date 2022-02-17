@@ -457,33 +457,47 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
   tf::StampedTransform transform_lidar_to_map;
   try
   {
-    transform_listener_->lookupTransform(target_frame, in_range_detections->header.frame_id, ros::Time(now), transform_lidar_to_map);
+    transform_listener_->lookupTransform(target_frame, in_range_detections->header.frame_id, in_range_detections->header.stamp, transform_lidar_to_map);
   }
   catch(tf::TransformException &ex)
   {
     ROS_ERROR("[%s] %s", __APP_NAME__, ex.what());
   }
   
-  for (const autoware_msgs::DetectedObject &object : in_range_detections)
+  for (const autoware_msgs::DetectedObject &object : in_range_detections->objects)
   {
     autoware_msgs::DetectedObject tmp_object;
     tmp_object = object;
 
     //Start Transfrom from lidar to map coordinate
     tmp_object.space_frame = target_frame;
-
-    geometry_msgs::PoseStampede tmp_pose_stamped;
+    
+    geometry_msgs::PoseStamped tmp_pose_stamped;
     tmp_pose_stamped.header = object.header;
     tmp_pose_stamped.pose = object.pose;
-    transform_listener_->transformPose(target_frame,tmp_pose_stamped,tmp_pose_stamped);
-    tmp_object.pose = tmp_pose_stamped.pose;
+    try
+    {
+      transform_listener_->transformPose(target_frame,tmp_pose_stamped,tmp_pose_stamped);
+      tmp_object.pose = tmp_pose_stamped.pose;
+    }
+    catch(tf::TransformException &ex)
+    {
+      
+      tf::Vector3 tf_point(object.pose.position.x,object.pose.position.y,object.pose.position.z);
+      
+      tf::Vector3 tf_point_t = transform_lidar_to_map * tf_point;
+      tmp_object.pose.position.x = tf_point_t.x();
+      tmp_object.pose.position.y = tf_point_t.y();
+      tmp_object.pose.position.z = tf_point_t.z();
+      
+ 
+    }
 
     geometry_msgs::Vector3Stamped tmp_vector3_stamped;
     tmp_vector3_stamped.header = object.header;
     tmp_vector3_stamped.vector = object.dimensions;
     transform_listener_->transformVector(target_frame,tmp_vector3_stamped,tmp_vector3_stamped);
     tmp_object.dimensions = tmp_vector3_stamped.vector;
-
 
     tmp_vector3_stamped.vector = object.velocity.linear;
     transform_listener_->transformVector(target_frame,tmp_vector3_stamped,tmp_vector3_stamped);
@@ -499,9 +513,11 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
     transform_listener_->transformVector(target_frame,tmp_vector3_stamped,tmp_vector3_stamped);
     tmp_object.acceleration.angular = tmp_vector3_stamped.vector;
     
-    pcl::PointCloud<pcl::PointXYZ> tmp_pointcloud;
-    pcl::fromROSMsg(object.pointcloud, tmp_pointcloud);
-    pcl_ros::transformPointCloud(target_frame, object.pointcloud, tmp_object.pointcloud,*transform_listener);
+    if (object.pointcloud.data.size() != 0){ //Pass detections only from vision
+      tmp_object.pointcloud = object.pointcloud;
+      tmp_object.pointcloud.header.frame_id = in_range_detections->header.frame_id;
+      pcl_ros::transformPointCloud(target_frame, tmp_object.pointcloud, tmp_object.pointcloud, *transform_listener_);
+    }
     
     tmp_object.convex_hull.header = object.convex_hull.header;
     tmp_object.convex_hull.header.frame_id = target_frame;
@@ -509,10 +525,14 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
     {
       tf::Vector3 tf_point(pt.x,pt.y,pt.z);
       tf::Vector3 tf_point_t = transform_lidar_to_map * tf_point;
-      tmp_object.convex_hull.polygon.points.emplace_back(tf_point_t.x(),tf_point_t.y(),tf_point_t.z());
+      geometry_msgs::Point32 tmp_point32;
+      tmp_point32.x = tf_point_t.x();
+      tmp_point32.y = tf_point_t.y();
+      tmp_point32.z = tf_point_t.z();
+      tmp_object.convex_hull.polygon.points.push_back(tmp_point32);
     }
 
-    tmp_detections.push_back(tmp_object);
+    tmp_detections.objects.push_back(tmp_object);
   }
 
   return tmp_detections;
@@ -541,7 +561,7 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
       && nullptr != in_range_detections
       && !in_range_detections->objects.empty())
   {
-    if (use_map_coordindate)
+    if (use_map_coordinate)
     {
       autoware_msgs::DetectedObjectArray transformed_range_detections;
       transformed_range_detections = ChangeDetectionCoordinate(in_range_detections, map_frame_);
@@ -586,7 +606,9 @@ ROSRangeVisionFusionApp::SyncedDetectionsCallback(
   if (use_map_coordinate)
   {
     autoware_msgs::DetectedObjectArray transformed_fusion_detections;
-    transformed_fusion_detections = ChangeDetectionCoordinate(fusion_objects, map_frame_);
+    autoware_msgs::DetectedObjectArray::Ptr tmp_detection_ptr(new autoware_msgs::DetectedObjectArray);
+    *tmp_detection_ptr = fusion_objects;
+    transformed_fusion_detections = ChangeDetectionCoordinate(tmp_detection_ptr, map_frame_);
     publisher_fused_objects_.publish(transformed_fusion_detections);
   }
   else
