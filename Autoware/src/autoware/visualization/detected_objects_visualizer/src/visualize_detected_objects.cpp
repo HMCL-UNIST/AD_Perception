@@ -140,7 +140,6 @@ void VisualizeDetectedObjects::DetectedObjectsCallback(const autoware_msgs::Dete
   visualization_msgs::MarkerArray visualization_markers;
 
   marker_id_ = 0;
-  ROS_INFO("%s", in_objects.header.frame_id.c_str());
   label_markers = ObjectsToLabels(in_objects);
   arrow_markers = ObjectsToArrows(in_objects);
   polygon_hulls = ObjectsToHulls(in_objects);
@@ -235,10 +234,6 @@ VisualizeDetectedObjects::ObjectsToBoxes(const autoware_msgs::DetectedObjectArra
       }
 
       object_boxes.markers.push_back(box);
-    }
-    else
-    {
-      ROS_ERROR("INVALID OBJECT");
     }
   }
   return object_boxes;
@@ -497,6 +492,7 @@ VisualizeDetectedObjects::ObjectsToLabels(const autoware_msgs::DetectedObjectArr
 
 bool VisualizeDetectedObjects::IsObjectValid(const autoware_msgs::DetectedObject &in_object)
 {
+  //later we can add here some constraints to get rid of cluster points of ego vehicle
   if (!in_object.valid ||
       std::isnan(in_object.pose.orientation.x) ||
       std::isnan(in_object.pose.orientation.y) ||
