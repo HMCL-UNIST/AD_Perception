@@ -160,6 +160,7 @@ void VisualizeDetectedObjects::DetectedObjectsCallback(const autoware_msgs::Dete
   visualization_markers.markers.insert(visualization_markers.markers.end(),
                                        centroid_markers.markers.begin(), centroid_markers.markers.end());
 
+
   publisher_markers_.publish(visualization_markers);
 }
 
@@ -236,6 +237,7 @@ VisualizeDetectedObjects::ObjectsToBoxes(const autoware_msgs::DetectedObjectArra
       object_boxes.markers.push_back(box);
     }
   }
+
   return object_boxes;
 }//ObjectsToBoxes
 
@@ -493,21 +495,23 @@ VisualizeDetectedObjects::ObjectsToLabels(const autoware_msgs::DetectedObjectArr
 bool VisualizeDetectedObjects::IsObjectValid(const autoware_msgs::DetectedObject &in_object)
 {
   //later we can add here some constraints to get rid of cluster points of ego vehicle
-  if (!in_object.valid ||
-      std::isnan(in_object.pose.orientation.x) ||
-      std::isnan(in_object.pose.orientation.y) ||
-      std::isnan(in_object.pose.orientation.z) ||
-      std::isnan(in_object.pose.orientation.w) ||
+  if (
+    !in_object.valid ||
+      // std::isnan(in_object.pose.orientation.x) ||
+      // std::isnan(in_object.pose.orientation.y) ||
+      // std::isnan(in_object.pose.orientation.z) ||
+      // std::isnan(in_object.pose.orientation.w) ||
       std::isnan(in_object.pose.position.x) ||
       std::isnan(in_object.pose.position.y) ||
-      std::isnan(in_object.pose.position.z) ||
-      (in_object.pose.position.x == 0.) ||
-      (in_object.pose.position.y == 0.) ||
-      (in_object.dimensions.x <= 0.) ||
-      (in_object.dimensions.y <= 0.) ||
-      (in_object.dimensions.z <= 0.)
+      std::isnan(in_object.pose.position.z) 
+      // (in_object.pose.position.x == 0.) ||
+      // (in_object.pose.position.y == 0.) ||
+      // (in_object.dimensions.x <= 0.) ||
+      // (in_object.dimensions.y <= 0.) ||
+      // (in_object.dimensions.z <= 0.)
     )
   {
+    ROS_ERROR("%s", ros::this_node::getNamespace().c_str());
     return false;
   }
   return true;

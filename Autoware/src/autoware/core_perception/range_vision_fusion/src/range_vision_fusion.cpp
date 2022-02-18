@@ -503,7 +503,11 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
       tmp_object.pose.position.y = tf_point_t.y();
       tmp_object.pose.position.z = tf_point_t.z();
       
- 
+    }
+
+    if(std::isnan(tmp_object.pose.position.x) || std::isnan(tmp_object.pose.position.y) || std::isnan(tmp_object.pose.position.z))
+    {
+      ROS_ERROR("!!!!");
     }
 
     geometry_msgs::Vector3Stamped tmp_vector3_stamped;
