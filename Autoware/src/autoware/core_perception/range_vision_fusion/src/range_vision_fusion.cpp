@@ -418,6 +418,7 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
 
   std::vector<bool> used_range_detections(range_in_cv.objects.size(), false);
   //only assign the closest
+  //this part make some error when range sensor detect, but vision dont
   for (size_t i = 0; i < vision_range_assignments.size(); i++)
   {
     if (!range_in_cv.objects.empty() && vision_range_closest[i] >= 0)
@@ -516,12 +517,12 @@ ROSRangeVisionFusionApp::ChangeDetectionCoordinate(
     tmp_object.acceleration.angular = tmp_vector3_stamped.vector;
     
     if (object.pointcloud.data.size() != 0){ //Pass detections only from vision
-      tmp_object.pointcloud = object.pointcloud;
       tmp_object.pointcloud.header.frame_id = in_range_detections->header.frame_id;
       pcl_ros::transformPointCloud(target_frame, tmp_object.pointcloud, tmp_object.pointcloud, *transform_listener_);
       tmp_object.pointcloud.header.frame_id = target_frame;
     }
     
+    tmp_object.convex_hull  = geometry_msgs::PolygonStamped() ;
     tmp_object.convex_hull.header = object.convex_hull.header;
     tmp_object.convex_hull.header.frame_id = target_frame;
     for (const geometry_msgs::Point32 &pt : object.convex_hull.polygon.points)

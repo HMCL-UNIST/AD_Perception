@@ -140,7 +140,7 @@ void VisualizeDetectedObjects::DetectedObjectsCallback(const autoware_msgs::Dete
   visualization_msgs::MarkerArray visualization_markers;
 
   marker_id_ = 0;
-
+  ROS_INFO("%s", in_objects.header.frame_id.c_str());
   label_markers = ObjectsToLabels(in_objects);
   arrow_markers = ObjectsToArrows(in_objects);
   polygon_hulls = ObjectsToHulls(in_objects);
@@ -235,6 +235,10 @@ VisualizeDetectedObjects::ObjectsToBoxes(const autoware_msgs::DetectedObjectArra
       }
 
       object_boxes.markers.push_back(box);
+    }
+    else
+    {
+      ROS_ERROR("INVALID OBJECT");
     }
   }
   return object_boxes;
