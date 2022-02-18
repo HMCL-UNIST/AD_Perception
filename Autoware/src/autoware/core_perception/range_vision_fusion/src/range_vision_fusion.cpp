@@ -419,14 +419,24 @@ ROSRangeVisionFusionApp::FuseRangeVisionDetections(
   std::vector<bool> used_range_detections(range_in_cv.objects.size(), false);
   //only assign the closest
   //this part make some error when range sensor detect, but vision dont
-  for (size_t i = 0; i < vision_range_assignments.size(); i++)
+  
+  // for (size_t i = 0; i < vision_range_assignments.size(); i++)
+  // {
+  //   if (!range_in_cv.objects.empty() && vision_range_closest[i] >= 0)
+  //   {
+  //     used_range_detections[i] = true;
+  //     fused_objects.objects.push_back(range_in_cv.objects[vision_range_closest[i]]);
+  //   }
+  // }
+
+  for (size_t i = 1; i < range_in_cv.objects.size(); i++)
   {
-    if (!range_in_cv.objects.empty() && vision_range_closest[i] >= 0)
+    if(!range_in_cv.objects.empty())
     {
-      used_range_detections[i] = true;
-      fused_objects.objects.push_back(range_in_cv.objects[vision_range_closest[i]]);
+      fused_objects.objects.push_back(range_in_cv.objects[i]);
     }
   }
+
   for (size_t i = 0; i < used_vision_detections.size(); i++)
   {
     if (!used_vision_detections[i])
