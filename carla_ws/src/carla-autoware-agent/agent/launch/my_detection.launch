@@ -63,7 +63,7 @@
     <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
   </include>
 
-  <!-- <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
+  <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
     <arg name='camera_id' value='left' />
     <arg name='gpu_device_id' value="0"/>
     <arg name='image_src' value="/carla/ego_vehicle/camera/rgb/left/image_color" />
@@ -72,7 +72,7 @@
     <arg name='nms_threshold' value='0.30'/>
     <arg name='pretrained_model_file' value='$(find vision_darknet_detect)/darknet/data/yolov3.weights'/>
     <arg name='names_file' value='$(find vision_darknet_detect)/darknet/cfg/coco.names'/>
-  </include> -->
+  </include>
 
   <!-- <include file='$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch'>
     <arg name='camera_id' value='right' />
@@ -121,11 +121,11 @@
   -->
   <include file='$(find range_vision_fusion)/launch/range_vision_fusion.launch'>
     <arg name='camera_node_name' value='/carla/ego_vehicle/camera/rgb'/>  
-    <arg name='camera_list' value='[front,rear]' /> 
+    <arg name='camera_list' value='[front,left,rear]' /> 
     <arg name='detected_objects_range' value='/detection/lidar_tracker/objects'/>
     <arg name='detected_objects_vision' value='/detection/image_detector'/>
     <!-- change topic's frame_id to /map, apply transform -->
-    <arg name="use_map_coordinate" value="true"/> 
+    <arg name="use_map_coordinate" value="false"/> 
     <arg name="map_frame_id" value="map"/>
     <arg name="overlap_threshold" value="0.6"/>
     <arg name="use_vector_map" value="false"/>
