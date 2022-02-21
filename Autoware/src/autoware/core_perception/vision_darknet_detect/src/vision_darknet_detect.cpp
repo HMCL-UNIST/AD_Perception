@@ -149,7 +149,7 @@ void Yolo3DetectorNode::convert_rect_to_image_obj(std::vector< RectClassScore<fl
     {
         {
             autoware_msgs::DetectedObject obj;
-
+            obj.header.frame_id = out_message.header.frame_id;
             obj.x = (in_objects[i].x /image_ratio_) - image_left_right_border_/image_ratio_;
             obj.y = (in_objects[i].y /image_ratio_) - image_top_bottom_border_/image_ratio_;
             obj.width = in_objects[i].w /image_ratio_;
@@ -362,7 +362,7 @@ void Yolo3DetectorNode::Run()
         generateColors(colors_, 80);
     #endif
 
-    std::string output_topic = "/detection/" + camera_id + "/image_detector/objects";
+    std::string output_topic = "/detection/image_detector/" + camera_id + "/objects";
     publisher_objects_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>(output_topic, 1);
 
     ROS_INFO("Subscribing to... %s", image_raw_topic_str.c_str());

@@ -5,6 +5,7 @@
 .nv/
 .ros/
 .rviz/
+.vscode/
 shared_dir/
 .bash_history
 .bash_logout

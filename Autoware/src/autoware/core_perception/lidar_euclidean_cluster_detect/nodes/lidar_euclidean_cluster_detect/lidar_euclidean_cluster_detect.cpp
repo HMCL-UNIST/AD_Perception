@@ -207,6 +207,7 @@ void publishDetectedObjects(const autoware_msgs::CloudClusterArray &in_clusters)
     detected_object.space_frame = in_clusters.header.frame_id;
     detected_object.pose = in_clusters.clusters[i].bounding_box.pose;
     detected_object.dimensions = in_clusters.clusters[i].dimensions;
+    detected_object.pointcloud.header = in_clusters.header;
     detected_object.pointcloud = in_clusters.clusters[i].cloud;
     detected_object.convex_hull = in_clusters.clusters[i].convex_hull;
     detected_object.valid = true;

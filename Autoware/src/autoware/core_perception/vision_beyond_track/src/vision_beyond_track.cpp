@@ -266,7 +266,7 @@ void BeyondTrackerNode::detection_to_objects(const std::vector<beyondtrack::Dete
   for (unsigned int i = 0; i < in_objects.size(); ++i)
   {
     autoware_msgs::DetectedObject obj;
-
+    obj.header.frame_id = out_message.header.frame_id;
     obj.x = (in_objects[i].bbox_[0]);
     obj.y = (in_objects[i].bbox_[1]);
     obj.width = (in_objects[i].bbox_[2] - in_objects[i].bbox_[0]);
@@ -358,7 +358,7 @@ void BeyondTrackerNode::Run()
 {
   ros::NodeHandle private_node_handle("~");//to receive args
 
-  std::string image_topic_src, camera_info_src, objects_topic_src;
+  std::string image_topic_src, camera_info_src, objects_topic_src, output_topic_src;
 
   private_node_handle.param<std::string>("camera_info_src", camera_info_src, "/camera_info");
   private_node_handle.param<std::string>("objects_topic_src", objects_topic_src,
@@ -376,8 +376,8 @@ void BeyondTrackerNode::Run()
   private_node_handle.param<double>("camera_height", camera_height_, 1.2);
   ROS_INFO("[%s] camera height: %f", __APP_NAME__, camera_height_);
 
-  objects_publisher_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>("/detection/image_tracker/objects",
-                                                                                  1);
+  private_node_handle.param<std::string>("output_topic", output_topic_src, "/detection/image_tracker/objects");
+  objects_publisher_ = node_handle_.advertise<autoware_msgs::DetectedObjectArray>(output_topic_src,1);
 
 #if (CV_MAJOR_VERSION <= 2)
   cv::generateColors(colors_, 20);
